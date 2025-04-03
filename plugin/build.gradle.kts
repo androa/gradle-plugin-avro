@@ -29,6 +29,7 @@ gradlePlugin {
     plugins {
         create("avroGradlePlugin") {
             id = "io.github.androa.gradle.plugin.avro"
+            group = "com.github.androa.gradle.plugin.avro"
             implementationClass = "io.github.androa.gradle.plugin.avro.AvroPlugin"
             version = "0.0.2"
 
