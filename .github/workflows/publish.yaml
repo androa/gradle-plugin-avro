@@ -1,6 +1,7 @@
 name: Publish Gradle Plugin
 
 on:
+  workflow_dispatch:
   release:
     types: [ published ]
 
