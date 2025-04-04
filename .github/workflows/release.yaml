@@ -82,6 +82,7 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
+    needs: [ release, determine-version ]
     permissions:
       contents: read
     steps:
