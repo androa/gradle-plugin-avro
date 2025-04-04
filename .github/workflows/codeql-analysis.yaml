@@ -17,8 +17,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: github/codeql-action/init@v3
         with:
-          languages: java
-          config-file: .github/codeql/codeql-config.yaml
+          build-mode: manual
+          languages: kotlin
+          queries: security-and-quality
 
       - uses: actions/setup-java@v4
         with:
