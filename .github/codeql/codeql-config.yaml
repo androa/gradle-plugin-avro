@@ -1,0 +1,8 @@
+name: "Gradle CodeQL Analysis"
+queries:
+  - uses: security-and-quality # Default security & quality checks
+paths:
+  - plugin/src/main/kotlin
+paths-ignore:
+  - build
+  - out
