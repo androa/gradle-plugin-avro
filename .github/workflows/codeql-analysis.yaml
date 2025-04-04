@@ -18,7 +18,7 @@ jobs:
       - uses: github/codeql-action/init@v3
         with:
           languages: java
-          config-file: .github/codeql/codeql-config.yml
+          config-file: .github/codeql/codeql-config.yaml
 
       - uses: actions/setup-java@v4
         with:
