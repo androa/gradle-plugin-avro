@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       publishOnly:
-        description: 'When true, only Publish the plugin to the Gradle Plugin Portal'
+        description: 'Only Publish the plugin to the Gradle Plugin Portal'
         required: false
         default: false
         type: boolean
