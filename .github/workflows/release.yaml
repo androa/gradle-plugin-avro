@@ -31,6 +31,7 @@ jobs:
 
       - id: semantic_version
         uses: paulhatch/semantic-version@v5.4.0
+
     outputs:
       version: ${{ steps.semantic_version.outputs.version }}
       previous_version: ${{ steps.semantic_version.outputs.previous_version }}
@@ -88,7 +89,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.release.tag_name }}
+          ref: v${{ needs.determine-version.outputs.version }}
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
