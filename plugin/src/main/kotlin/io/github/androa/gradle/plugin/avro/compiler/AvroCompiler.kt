@@ -8,7 +8,7 @@ import java.io.File
 class AvroCompiler {
     fun compileProtocol(
         compilerOpts: CompilerOptions = CompilerOptions(),
-        inputDir: File,
+        inputDir: Set<File>,
         outputDir: File,
     ) {
         inputDir.avroProtocolFiles.forEach { src ->
@@ -20,7 +20,7 @@ class AvroCompiler {
 
     fun compileSchema(
         compilerOpts: CompilerOptions = CompilerOptions(),
-        inputDir: File,
+        inputDir: Set<File>,
         outputDir: File,
     ) {
         val parser = Schema.Parser()
@@ -66,10 +66,10 @@ class AvroCompiler {
     }
 
     private companion object {
-        private val File.avroProtocolFiles: List<File>
-            get() = walk().filter { it.isFile && it.extension == "avpr" }.toList()
+        private val Set<File>.avroProtocolFiles: List<File>
+            get() = filter { it.isFile && it.extension == "avpr" }.toList()
 
-        private val File.avroSchemaFiles: List<File>
-            get() = walk().filter { it.isFile && it.extension == "avsc" }.toList()
+        private val Set<File>.avroSchemaFiles: List<File>
+            get() = filter { it.isFile && it.extension == "avsc" }.toList()
     }
 }

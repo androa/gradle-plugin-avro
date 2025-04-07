@@ -2,6 +2,7 @@ package io.github.androa.gradle.plugin.avro
 
 import io.github.androa.gradle.plugin.avro.compiler.OptionalGettersType
 import org.apache.avro.compiler.specific.SpecificCompiler.FieldVisibility
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -17,7 +18,7 @@ abstract class AvroExtension
          * Directory containing Avro schema (.avsc) files.
          * Default: src/main/avro
          */
-        abstract val schemasDir: DirectoryProperty
+        abstract val schemas: ConfigurableFileCollection
 
         /**
          * Directory where generated sources will be placed.
@@ -76,7 +77,7 @@ abstract class AvroExtension
         abstract val useBigDecimal: Property<Boolean>
 
         init {
-            schemasDir.convention(objects.directoryProperty().fileValue(File("src/main/avro")))
+            schemas.convention(objects.directoryProperty().fileValue(File("src/main/avro")))
             outputDir.convention(objects.directoryProperty().fileValue(File("build/generated/sources/avro")))
 
             encoding.convention("UTF-8")

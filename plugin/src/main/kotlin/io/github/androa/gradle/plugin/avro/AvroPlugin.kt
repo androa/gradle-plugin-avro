@@ -13,7 +13,7 @@ class AvroPlugin : Plugin<Project> {
         // Register the task
         val generateTask: TaskProvider<GenerateAvroTask> =
             project.tasks.register("generateAvro", GenerateAvroTask::class.java) {
-                it.schemasDir.convention(extension.schemasDir)
+                it.schemas.convention(extension.schemas)
                 it.outputDir.convention(extension.outputDir)
 
                 it.encoding.convention(extension.encoding)

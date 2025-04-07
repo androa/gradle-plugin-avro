@@ -6,11 +6,12 @@ import io.github.androa.gradle.plugin.avro.compiler.OptionalGettersType
 import org.apache.avro.compiler.specific.SpecificCompiler
 import org.apache.avro.generic.GenericData
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
@@ -24,9 +25,9 @@ abstract class GenerateAvroTask : DefaultTask() {
     private val compiler = AvroCompiler()
 
     @get:SkipWhenEmpty
-    @get:InputDirectory
+    @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val schemasDir: DirectoryProperty
+    abstract val schemas: ConfigurableFileCollection
 
     @get:OutputDirectory
     abstract val outputDir: DirectoryProperty
@@ -65,7 +66,7 @@ abstract class GenerateAvroTask : DefaultTask() {
 
     @TaskAction
     fun generate() {
-        logger.info("Generating Avro data classes from ${schemasDir.get().asFile} to ${outputDir.get().asFile}")
+        logger.info("Generating Avro data classes from ${schemas.asPath} to ${outputDir.get().asFile}")
 
         // Prepare the compiler options.
         val options = CompilerOptions()
@@ -111,13 +112,13 @@ abstract class GenerateAvroTask : DefaultTask() {
         }
 
         // Determine if the input directory contains Avro protocol files.
-        val inputDir = schemasDir.get().asFile
+        val inputDir = schemas.files.toSet()
         val intermediateDir = project.file("build/intermediates/avro")
 
         // Transform any Avro IDL (.avdl) files to Avro protocol (.avpr) files.
         if (transformIdl(inputDir, intermediateDir)) {
             // Compile the Avro protocol and schema files.
-            compiler.compileProtocol(options, intermediateDir, outputDir.get().asFile)
+            compiler.compileProtocol(options, intermediateDir.listFiles()!!.toSet(), outputDir.get().asFile)
         }
 
         // Compile any Avro protocol.
@@ -128,7 +129,7 @@ abstract class GenerateAvroTask : DefaultTask() {
     }
 
     private fun transformIdl(
-        inputDir: File,
+        inputDir: Set<File>,
         outputDir: File,
     ) = IdlTransformer().transformIdl(inputDir, outputDir)
 }

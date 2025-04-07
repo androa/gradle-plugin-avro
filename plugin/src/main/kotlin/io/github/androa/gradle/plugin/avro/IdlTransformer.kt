@@ -11,15 +11,15 @@ class IdlTransformer {
      * @return true if any IDL files were found and transformed, false otherwise.
      */
     fun transformIdl(
-        inputDir: File,
+        inputDir: Set<File>,
         outputDir: File,
     ): Boolean {
-        val hasIdlFiles = inputDir.walk().any { it.isFile && it.extension == "avdl" }
+        val hasIdlFiles = inputDir.any { it.isFile && it.extension == "avdl" }
         if (!hasIdlFiles) return false
 
         val parser = IdlReader()
 
-        inputDir.walk().filter { it.isFile && it.extension == "avdl" }.forEach { file ->
+        inputDir.filter { it.isFile && it.extension == "avdl" }.forEach { file ->
             // Create output file with same name but .avpr extension
             val outputFile = File(outputDir, file.nameWithoutExtension + ".avpr")
             outputFile.parentFile.mkdirs() // Ensure output directory exists

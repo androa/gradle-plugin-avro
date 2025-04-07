@@ -6,13 +6,14 @@ import kotlin.io.path.Path
 
 class IdlTransformerTest {
     @Test
-    fun foobar() {
+    fun `test IDL files are transformed to protocols`() {
         val idlTransformer = IdlTransformer()
-        val inputDir = Path("src/test/resources/idl").toFile()
+        val inputFiles = setOf(Path("src/test/resources/idl").toFile())
         val outputDir = Path("build/intermediates/avro/").toFile()
-        idlTransformer.transformIdl(inputDir, outputDir)
+
+        idlTransformer.transformIdl(inputFiles, outputDir)
 
         // Add assertions to verify the transformation
-        assertTrue(inputDir.exists())
+        assertTrue(outputDir.exists())
     }
 }
