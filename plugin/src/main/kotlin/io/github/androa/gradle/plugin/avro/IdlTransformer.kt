@@ -14,17 +14,17 @@ class IdlTransformer {
         inputDir: Set<File>,
         outputDir: File,
     ): Boolean {
-        val hasIdlFiles = inputDir.any { it.isFile && it.extension == "avdl" }
-        if (!hasIdlFiles) return false
+        val avdlFiles = inputDir.avdlFiles().toList()
+        if (avdlFiles.isEmpty()) return false
 
         val parser = IdlReader()
 
-        inputDir.filter { it.isFile && it.extension == "avdl" }.forEach { file ->
+        avdlFiles.forEach { file ->
             // Create output file with same name but .avpr extension
             val outputFile = File(outputDir, file.nameWithoutExtension + ".avpr")
             outputFile.parentFile.mkdirs() // Ensure output directory exists
 
-            val idlFile = parser.parse(file.inputStream())
+            val idlFile = parser.parse(file.parentFile.toURI(), file.readText())
             PrintStream(Files.newOutputStream(outputFile.toPath())).use { output ->
                 val protocol = idlFile.protocol
                 if (protocol != null) {
@@ -36,5 +36,9 @@ class IdlTransformer {
         }
 
         return true
+    }
+
+    companion object {
+        fun Set<File>.avdlFiles() = flatMap { it.walk().filter { it.isFile && it.extension == "avdl" } }
     }
 }
