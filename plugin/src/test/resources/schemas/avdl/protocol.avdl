@@ -1,0 +1,11 @@
+@namespace("com.example.avro")
+protocol RecieptService {
+	record Receipt {
+		string id;
+		string name;
+		string email = "";
+	}
+
+	Receipt getReciept(string id);
+    string createReciept(Receipt reciept);
+}

@@ -15,6 +15,7 @@ class AvroPlugin : Plugin<Project> {
             project.tasks.register("generateAvro", GenerateAvroTask::class.java) {
                 it.schemas.convention(extension.schemas)
                 it.outputDir.convention(extension.outputDir)
+                it.intermediateDir.convention(project.layout.buildDirectory.dir("intermediates/avro"))
 
                 it.encoding.convention(extension.encoding)
                 it.stringType.convention(extension.stringType)

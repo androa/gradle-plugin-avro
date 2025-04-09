@@ -10,14 +10,14 @@ class IdlTransformerTest {
     @Test
     fun `test IDL files are transformed to protocols`() {
         val idlTransformer = IdlTransformer()
-        val inputFiles = File("src/test/resources/idl/idl-schema.avdl")
+        val inputFiles = File("src/test/resources/schemas/avdl/protocol.avdl")
         val outputDir = File("build/intermediates/avro/")
 
         idlTransformer.transformIdl(setOf(inputFiles), outputDir)
 
         // Add assertions to verify the transformation
         assertTrue(outputDir.exists())
-        val outputFile = File(outputDir, "idl-schema.avpr")
+        val outputFile = File(outputDir, "protocol.avpr")
         assertTrue(outputFile.exists(), "Protocol file should be generated")
     }
 

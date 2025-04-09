@@ -1,0 +1,45 @@
+{
+  "protocol": "UserService",
+  "namespace": "com.example.avro",
+  "types": [
+    {
+      "type": "record",
+      "name": "User",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "email",
+          "type": "string",
+          "default": ""
+        }
+      ]
+    }
+  ],
+  "messages": {
+    "getUser": {
+      "request": [
+        {
+          "name": "id",
+          "type": "string"
+        }
+      ],
+      "response": "User"
+    },
+    "createUser": {
+      "request": [
+        {
+          "name": "user",
+          "type": "User"
+        }
+      ],
+      "response": "string"
+    }
+  }
+}

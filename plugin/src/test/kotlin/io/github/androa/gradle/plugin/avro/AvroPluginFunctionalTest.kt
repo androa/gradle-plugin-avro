@@ -2,137 +2,81 @@ package io.github.androa.gradle.plugin.avro
 
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 class AvroPluginFunctionalTest {
     @field:TempDir
     lateinit var projectDir: File
 
-    @Test
-    fun `plugin generates code successfully`() {
-        // Create a minimal settings file so that Gradle recognizes the project.
+    @ParameterizedTest
+    @ValueSource(
+        strings = [
+            "zero-config.gradle.kts",
+            "default.gradle.kts",
+            "custom-paths.gradle.kts",
+        ],
+    )
+    fun `plugin generates code successfully with different build configs`(buildConfigFile: String) {
+        // Create a minimal settings file
         projectDir.resolve("settings.gradle").writeText("")
 
-        // Create a minimal build.gradle.kts that applies the plugin
-        projectDir.resolve("build.gradle.kts").writeText(
-            """
-            import org.apache.avro.compiler.specific.SpecificCompiler
-            
-            plugins {
-                id("io.github.androa.gradle.plugin.avro")
-                kotlin("jvm") version "2.1.20"
-            }
-            
-            generateAvro {
-                noSetters = true
-                // Both assign and set() is possible
-                addNullSafeAnnotations.set(true)
-                encoding = "UTF-8"
-                fieldVisibility = SpecificCompiler.FieldVisibility.PRIVATE 
-                
-                //schemas.from(project.fileTree("src/main/avro"))
-                outputDir.set(layout.buildDirectory.dir("generated-avro"))
-            }
-            """.trimIndent(),
+        // Copy the build config from resources
+        copyResourceTo("build-configs/$buildConfigFile", "build.gradle.kts")
+
+        // For the custom paths test, we need to adjust the directory structure
+        if (buildConfigFile == "custom-paths.gradle.kts") {
+            setupSchemaFiles("custom-avro-path")
+            runAndVerify("build/custom-output-dir")
+        } else {
+            setupSchemaFiles()
+            runAndVerify()
+        }
+    }
+
+    /**
+     * Helper function to copy a resource file to the test project directory
+     */
+    private fun copyResourceTo(
+        resourcePath: String,
+        targetPath: String,
+    ) {
+        val inputStream =
+            javaClass.classLoader.getResourceAsStream(resourcePath)
+                ?: throw IllegalArgumentException("Resource not found: $resourcePath")
+
+        val targetFile = projectDir.resolve(targetPath)
+        targetFile.parentFile.mkdirs()
+
+        Files.copy(
+            inputStream,
+            targetFile.toPath(),
+            StandardCopyOption.REPLACE_EXISTING,
         )
+    }
 
-        // Create a dummy Avro schema file
-        projectDir.resolve("src/main/avro/").apply {
-            mkdirs()
-            resolve("schema.avsc").writeText(
-                // language=AvroSchema
-                """
-                {
-                  "namespace": "com.example",
-                  "type": "record",
-                  "name": "Dummy",
-                  "fields": [
-                    { "name": "id", "type": "int" },
-                    { "name": "age", "type": [ "null", "int" ] }
-                  ]
-                }
-                """.trimIndent(),
-            )
-        }
+    /**
+     * Helper function to set up schema files in the project directory
+     */
+    private fun setupSchemaFiles(targetDir: String = "src/main/avro") {
+        // Copy AVSC schema
+        copyResourceTo("schemas/avsc/schema.avsc", "$targetDir/schema.avsc")
 
-        // Create a dummy Avro protocol file
-        projectDir.resolve("src/main/avro/").apply {
-            mkdirs()
-            resolve("protocol.avpr").writeText(
-                // language=AvroSchema
-                """
-                {
-                  "protocol": "UserService",
-                  "namespace": "com.example.avro",
-                  "types": [
-                    {
-                      "type": "record",
-                      "name": "User",
-                      "fields": [
-                        {
-                          "name": "id",
-                          "type": "string"
-                        },
-                        {
-                          "name": "name",
-                          "type": "string"
-                        },
-                        {
-                          "name": "email",
-                          "type": "string",
-                          "default": ""
-                        }
-                      ]
-                    }
-                  ],
-                  "messages": {
-                    "getUser": {
-                      "request": [
-                        {
-                          "name": "id",
-                          "type": "string"
-                        }
-                      ],
-                      "response": "User"
-                    },
-                    "createUser": {
-                      "request": [
-                        {
-                          "name": "user",
-                          "type": "User"
-                        }
-                      ],
-                      "response": "string"
-                    }
-                  }
-                }
-                """.trimIndent(),
-            )
-        }
+        // Copy AVPR protocol
+        copyResourceTo("schemas/avpr/protocol.avpr", "$targetDir/protocol.avpr")
 
-        // Create a dummy Avro IDL file
-        projectDir.resolve("src/main/avro/").apply {
-            mkdirs()
-            resolve("protocol.avdl").writeText(
-                // language=AvroIDL
-                """
-                @namespace("com.example.avro")
-                protocol RecieptService {
-                	record Receipt {
-                		string id;
-                		string name;
-                		string email = "";
-                	}
+        // Copy AVDL file
+        copyResourceTo("schemas/avdl/protocol.avdl", "$targetDir/protocol.avdl")
+    }
 
-                	Receipt getReciept(string id);
-                    string createReciept(Receipt reciept);
-                }
-                """.trimIndent(),
-            )
-        }
-
+    /**
+     * Helper function to run the generateAvro task and verify outputs
+     */
+    private fun runAndVerify(outputDir: String = "build/generated/sources/avro") {
         // Run the generateAvro task
         GradleRunner
             .create()
@@ -142,19 +86,22 @@ class AvroPluginFunctionalTest {
             .build()
 
         // Verify that the output directory was created and contains generated files
-        val outputDir = projectDir.resolve("build/generated-avro")
+        val generatedDir = projectDir.resolve(outputDir)
         assertTrue(
-            outputDir.exists() && outputDir.listFiles()?.isNotEmpty() == true,
-            "Expected generated Avro code in ${outputDir.absolutePath}",
+            generatedDir.exists() && generatedDir.listFiles()?.isNotEmpty() == true,
+            "Expected generated Avro code in ${generatedDir.absolutePath}",
         )
 
-        with(outputDir.walk().filter { it.extension == "java" }) {
-            assertTrue(any { it.name == "Dummy.java" }, "Expected Dummy.java in ${outputDir.absolutePath}")
-            assertTrue(any { it.name == "User.java" }, "Expected User.java in ${outputDir.absolutePath}")
-            assertTrue(any { it.name == "UserService.java" }, "Expected UserService.java in ${outputDir.absolutePath}")
+        with(generatedDir.walk().filter { it.extension == "java" }) {
+            assertTrue(any { it.name == "Dummy.java" }, "Expected Dummy.java in ${generatedDir.absolutePath}")
+            assertTrue(any { it.name == "User.java" }, "Expected User.java in ${generatedDir.absolutePath}")
+            assertTrue(
+                any { it.name == "UserService.java" },
+                "Expected UserService.java in ${generatedDir.absolutePath}",
+            )
             assertTrue(
                 any { it.name == "RecieptService.java" },
-                "Expected RecieptService.java in ${outputDir.absolutePath}",
+                "Expected RecieptService.java in ${generatedDir.absolutePath}",
             )
         }
     }

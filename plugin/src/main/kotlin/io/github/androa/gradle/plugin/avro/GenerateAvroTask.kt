@@ -32,6 +32,9 @@ abstract class GenerateAvroTask : DefaultTask() {
     @get:OutputDirectory
     abstract val outputDir: DirectoryProperty
 
+    @get:OutputDirectory
+    abstract val intermediateDir: DirectoryProperty
+
     @get:Input
     @get:Optional
     abstract val encoding: Property<String>
