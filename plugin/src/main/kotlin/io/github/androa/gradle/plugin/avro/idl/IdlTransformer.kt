@@ -1,4 +1,4 @@
-package io.github.androa.gradle.plugin.avro
+package io.github.androa.gradle.plugin.avro.idl
 
 import org.apache.avro.idl.IdlReader
 import java.io.File

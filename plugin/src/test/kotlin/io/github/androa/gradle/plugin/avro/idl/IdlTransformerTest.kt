@@ -1,4 +1,4 @@
-package io.github.androa.gradle.plugin.avro
+package io.github.androa.gradle.plugin.avro.idl
 
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

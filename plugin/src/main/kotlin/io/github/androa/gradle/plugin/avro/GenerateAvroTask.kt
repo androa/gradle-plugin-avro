@@ -3,6 +3,7 @@ package io.github.androa.gradle.plugin.avro
 import io.github.androa.gradle.plugin.avro.compiler.AvroCompiler
 import io.github.androa.gradle.plugin.avro.compiler.CompilerOptions
 import io.github.androa.gradle.plugin.avro.compiler.OptionalGettersType
+import io.github.androa.gradle.plugin.avro.idl.IdlTransformer
 import org.apache.avro.compiler.specific.SpecificCompiler
 import org.apache.avro.generic.GenericData
 import org.gradle.api.DefaultTask
