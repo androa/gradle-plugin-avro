@@ -31,7 +31,7 @@ gradlePlugin {
             id = "io.github.androa.gradle.plugin.avro"
             group = "io.github.androa.gradle.plugin.avro"
             implementationClass = "io.github.androa.gradle.plugin.avro.AvroPlugin"
-            version = "0.0.9"
+            version = "0.0.10"
 
             displayName = "Gradle Avro Plugin"
             description = "Gradle plugin for generating Java classes from Avro schemas."
