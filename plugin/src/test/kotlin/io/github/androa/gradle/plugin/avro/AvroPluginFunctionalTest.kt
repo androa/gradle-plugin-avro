@@ -32,7 +32,7 @@ class AvroPluginFunctionalTest {
                 encoding = "UTF-8"
                 fieldVisibility = SpecificCompiler.FieldVisibility.PRIVATE 
                 
-                schemas.from(project.fileTree("src/main/avro"))
+                //schemas.from(project.fileTree("src/main/avro"))
                 outputDir.set(layout.buildDirectory.dir("generated-avro"))
             }
             """.trimIndent(),

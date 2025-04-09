@@ -77,7 +77,7 @@ abstract class AvroExtension
         abstract val useBigDecimal: Property<Boolean>
 
         init {
-            schemas.convention(objects.directoryProperty().fileValue(File("src/main/avro")))
+            schemas.convention(objects.fileTree().from("src/main/avro"))
             outputDir.convention(objects.directoryProperty().fileValue(File("build/generated/sources/avro")))
 
             encoding.convention("UTF-8")
