@@ -7,11 +7,7 @@ plugins {
 
 generateAvro {
     noSetters = true
-    // Both assign and set() is possible
     addNullSafeAnnotations.set(true)
     encoding = "UTF-8"
-    fieldVisibility = SpecificCompiler.FieldVisibility.PRIVATE
-
-    // schemas.from(project.fileTree("src/main/avro"))
-    // outputDir.set(layout.buildDirectory.dir("generated-avro"))
+    fieldVisibility = SpecificCompiler.FieldVisibility.PUBLIC
 }

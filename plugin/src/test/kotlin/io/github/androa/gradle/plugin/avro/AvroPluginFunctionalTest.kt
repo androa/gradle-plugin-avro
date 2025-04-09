@@ -17,7 +17,7 @@ class AvroPluginFunctionalTest {
     @ValueSource(
         strings = [
             "zero-config.gradle.kts",
-            "default.gradle.kts",
+            "custom-settings.gradle.kts",
             "custom-paths.gradle.kts",
         ],
     )
