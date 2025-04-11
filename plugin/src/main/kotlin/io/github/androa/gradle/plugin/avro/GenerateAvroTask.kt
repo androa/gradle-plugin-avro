@@ -117,7 +117,7 @@ abstract class GenerateAvroTask : DefaultTask() {
 
         // Determine if the input directory contains Avro protocol files.
         val inputDir = schemas.files.toSet()
-        val intermediateDir = project.file("build/intermediates/avro")
+        val intermediateDir = intermediateDir.get().asFile
 
         // Transform any Avro IDL (.avdl) files to Avro protocol (.avpr) files.
         if (transformIdl(inputDir, intermediateDir)) {

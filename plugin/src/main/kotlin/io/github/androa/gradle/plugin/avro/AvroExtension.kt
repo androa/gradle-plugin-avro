@@ -27,6 +27,12 @@ abstract class AvroExtension
         abstract val outputDir: DirectoryProperty
 
         /**
+         * Directory where intermediate files will be placed.
+         * Default: build/intermediates/avro
+         */
+        abstract val intermediateDir: DirectoryProperty
+
+        /**
          * Set the encoding of the output files.
          * Possible values: UTF-8, UTF-16, etc.
          * Default: UTF-8
@@ -79,6 +85,7 @@ abstract class AvroExtension
         init {
             schemas.convention(objects.fileTree().from("src/main/avro"))
             outputDir.convention(objects.directoryProperty().fileValue(File("build/generated/sources/avro")))
+            intermediateDir.convention(objects.directoryProperty().fileValue(File("build/intermediates/avro")))
 
             encoding.convention("UTF-8")
             stringType.convention(false)

@@ -13,6 +13,9 @@ class AvroPlugin : Plugin<Project> {
         // Register the task
         val generateTask: TaskProvider<GenerateAvroTask> =
             project.tasks.register("generateAvro", GenerateAvroTask::class.java) {
+                it.group = "avro"
+                it.description = "Generates Java classes from Avro schema files"
+
                 it.schemas.convention(extension.schemas)
                 it.outputDir.convention(extension.outputDir)
                 it.intermediateDir.convention(project.layout.buildDirectory.dir("intermediates/avro"))
@@ -35,7 +38,7 @@ class AvroPlugin : Plugin<Project> {
         // Add the generated sources to the source set
         project.plugins.withId("java") {
             val sourceSets = project.extensions.getByName("sourceSets") as SourceSetContainer
-            sourceSets.getByName("main").java.srcDir(generateTask.get().outputs.files)
+            sourceSets.getByName("main").java.srcDir(generateTask.map { it.outputs.files })
         }
     }
 }
