@@ -26,15 +26,19 @@ class GenerateAvroTaskTest {
     fun setup() {
         // Create a test project and task
         project = ProjectBuilder.builder().withProjectDir(tempDir.toFile()).build()
-        task = project.tasks.create("generateAvro", GenerateAvroTask::class.java)
+        val taskProvider = project.tasks.register("generateAvro", GenerateAvroTask::class.java)
 
         // Setup schema directory and output directory
         schemaDir = tempDir.resolve("schemas").toFile().apply { mkdirs() }
 
         // Set up task properties
-        task.schemas.setFrom(schemaDir)
-        task.outputDir.set(tempDir.resolve("output").toFile())
-        task.intermediateDir.set(tempDir.resolve("intermediate").toFile())
+        taskProvider.configure { task ->
+            task.schemas.setFrom(schemaDir)
+            task.outputDir.set(tempDir.resolve("output").toFile())
+            task.intermediateDir.set(tempDir.resolve("intermediate").toFile())
+        }
+
+        task = taskProvider.get()
 
         // Create output directory to avoid test failures
         task.outputDir

@@ -75,19 +75,21 @@ class ErrorHandlingTest {
                 .builder()
                 .withProjectDir(tempDir.toFile())
                 .build()
-        val task = project.tasks.create("generateAvro", GenerateAvroTask::class.java)
 
         // Create an empty directory
         val emptyDir = tempDir.resolve("empty").toFile().apply { mkdirs() }
         val outputDir = tempDir.resolve("output").toFile().apply { mkdirs() }
 
         // Configure task
-        task.schemas.setFrom(emptyDir)
-        task.outputDir.set(outputDir)
-        task.intermediateDir.set(tempDir.resolve("intermediate").toFile())
+        val taskProvider = project.tasks.register("generateAvro", GenerateAvroTask::class.java)
+        taskProvider.configure { task ->
+            task.schemas.setFrom(emptyDir)
+            task.outputDir.set(outputDir)
+            task.intermediateDir.set(tempDir.resolve("intermediate").toFile())
+        }
 
         // Execute - should not throw exception
-        task.generate()
+        taskProvider.get().generate()
 
         // Verify output dir exists but is empty
         assertTrue(outputDir.exists(), "Output directory should exist")
@@ -101,7 +103,6 @@ class ErrorHandlingTest {
                 .builder()
                 .withProjectDir(tempDir.toFile())
                 .build()
-        val task = project.tasks.create("generateAvro", GenerateAvroTask::class.java)
 
         // Create a malformed protocol file
         val malformedProtocol = tempDir.resolve("malformed.avpr").toFile()
@@ -124,15 +125,18 @@ class ErrorHandlingTest {
             """.trimIndent(),
         )
 
+        val taskProvider = project.tasks.register("generateAvro", GenerateAvroTask::class.java)
         // Configure task
-        task.schemas.setFrom(malformedProtocol)
-        task.outputDir.set(tempDir.resolve("output").toFile())
-        task.intermediateDir.set(tempDir.resolve("intermediate").toFile())
+        taskProvider.configure { task ->
+            task.schemas.setFrom(malformedProtocol)
+            task.outputDir.set(tempDir.resolve("output").toFile())
+            task.intermediateDir.set(tempDir.resolve("intermediate").toFile())
+        }
 
         // Execute and verify
         val exception =
             assertThrows(Exception::class.java) {
-                task.generate()
+                taskProvider.get().generate()
             }
 
         // Verify error message is helpful
