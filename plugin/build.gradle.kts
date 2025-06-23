@@ -1,7 +1,7 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
-    kotlin("jvm") version "2.1.21"
+    kotlin("jvm") version "2.2.0"
     `java-gradle-plugin`
     id("com.gradle.plugin-publish") version "1.3.1"
     id("org.jlleitschuh.gradle.ktlint") version "12.3.0"
