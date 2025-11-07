@@ -20,7 +20,7 @@ dependencies {
     implementation("org.apache.avro:avro:1.12.0")
 
     testImplementation(kotlin("test"))
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.13.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:6.0.1")
 }
 
 gradlePlugin {
