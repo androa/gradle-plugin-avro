@@ -21,8 +21,8 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-      - uses: gradle/actions/wrapper-validation@v5
-      - uses: gradle/actions/setup-gradle@v5
+      - uses: gradle/actions/wrapper-validation@v6
+      - uses: gradle/actions/setup-gradle@v6
       - run: ./gradlew test
 
   determine-version:
@@ -97,8 +97,8 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-      - uses: gradle/actions/wrapper-validation@v5
-      - uses: gradle/actions/setup-gradle@v5
+      - uses: gradle/actions/wrapper-validation@v6
+      - uses: gradle/actions/setup-gradle@v6
 
       - name: Publish Plugin to Gradle Plugin Portal
         run: ./gradlew publishPlugins
