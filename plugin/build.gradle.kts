@@ -15,9 +15,9 @@ repositories {
 dependencies {
     implementation("org.jlleitschuh.gradle:ktlint-gradle:12.1.2")
 
-    implementation("org.apache.avro:avro-compiler:1.12.0")
-    implementation("org.apache.avro:avro-tools:1.12.0")
-    implementation("org.apache.avro:avro:1.12.0")
+    implementation("org.apache.avro:avro-compiler:1.12.1")
+    implementation("org.apache.avro:avro-tools:1.12.1")
+    implementation("org.apache.avro:avro:1.12.1")
 
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter-params:6.0.1")
